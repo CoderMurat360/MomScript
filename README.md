@@ -9,14 +9,14 @@ But in the future, I hope it could be used to teach anybody to program, even you
 
 ## State of the project
 Right now, it's a little bare, but don't worry, development will continue!
-Current features:
-Printing to the console
-Variables
-User input
-Type casting
+- Current features:
+- Printing to the console
+- Variables
+- User input
+- Type casting
 
 Current limitations/bugs:
-Comments cannot be used on the same line as code
+- Comments cannot be used on the same line as code
 
 ## How to use
 To run the file without an IDE:

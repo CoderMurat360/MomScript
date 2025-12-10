@@ -1,4 +1,6 @@
 # MomScript
+
+## Description
 A simple programming language made in Python, meant to teach people core concepts of programming languages.
 
 Specifically, for my mom and her birthday!

@@ -7,6 +7,7 @@ Specifically, for my mom and her birthday!
 
 But in the future, I hope it could be used to teach anybody to program, even your own mom! (see what I did there?)
 
+## State of the project
 Right now, it's a little bare, but don't worry, development will continue!
 Current features:
 Printing to the console

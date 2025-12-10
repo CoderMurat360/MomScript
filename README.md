@@ -18,8 +18,13 @@ Type casting
 Current limitations/bugs:
 Comments cannot be used on the same line as code
 
+## How to use
 To run the file without an IDE:
-Open the terminal and copy:
+Open a terminal and enter this:
 python main.py example.ms
 
 Of course, example.ms is a placeholder; you can name it whatever you want.
+
+The main.py file is the interpreter. If you have the files open in an IDE, run main.py to run the MomScript code.
+
+I am planning to make a Visual Studio Code template soon (since that is what I am using to make this project!)

@@ -1,22 +1,34 @@
-# Welcome to MomScript! Follow the syntax examples below to get started!
+# Welcome to MomScript!
 
+# comments can be put on their own line starting with a hashtag
+
+# print a string
 print "Hello World!"
 
-# declare a new variable, "x", an integer, and set its value to 17
-set int x 17
-print x
+# make variables!
+set int num 17
+set str name "Murat"
+set float decimal 6.7
+set bool condition true
 
-# change an existing variable's value!
-change int x 20
-print x
+# print variables!
+print num
+print name
+print decimal
+print condition
 
-# get user input
-input set username print "Enter your username: "
-print username
+# change the values of variables!
+# you can even change their type!
+change str name "User"
+print num
 
-# type casting
-typechange username bool
-print username
+# print the type of the variable and change it!
+show_type num
+type_change num str
+show_type num
 
-# print a variable's type
-showtype x
+# user input
+input set answer print "Do you like animals? "
+print answer
+input change answer print "Do you like spiders? "
+print answer

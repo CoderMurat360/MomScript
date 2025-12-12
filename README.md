@@ -9,6 +9,7 @@ But in the future, I hope it could be used to teach anybody to program, even you
 
 ## State of the project
 Right now, it's a little bare, but don't worry, development will continue!
+
 Current features:
 - Printing to the console
 - Variables

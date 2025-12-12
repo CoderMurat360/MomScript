@@ -26,6 +26,7 @@ New features:
 - New command, show_type: prints the type of the variable.
 - Debug mode that prints the split line and the variable storage at the end of each line run
 - Updated syntax: typechange --> type_change
+
 Coming soon:
 - Updated debug mode
 - Updated printing

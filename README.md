@@ -33,6 +33,9 @@ New features:
 Coming soon:
 - else and else if
 - functions
+- while and for loops
+- lists
+- a FULL documentation
 
 ## How to use
 To run the file without an IDE:

@@ -8,7 +8,7 @@ Specifically, for my mom and her birthday!
 But in the future, I hope it could be used to teach anybody to program, even your own mom! (see what I did there?)
 
 ## State of the project
-Right now, it's a little bare, but don't worry, development will continue!
+It's going well! Only things left until the full release are adding else/else-if, while and for loops, lists, and functions.
 
 Current features:
 - Printing to the console
@@ -16,22 +16,23 @@ Current features:
 - User input
 - Type casting
 - Printing types
+- Expressions (math, concatenation, and boolean expressions)
+- if-statements
 
 Current limitations/bugs:
 - Comments cannot be used on the same line as code
-- Only strings and variables can be printed, to print anything else first make a variable then print it (will be fixed)
+- no else/else-ifs
 
 ### Updates and things coming soon
 New features:
-- New command, show_type: prints the type of the variable.
-- Debug mode that prints the split line and the variable storage at the end of each line run
-- Updated syntax: typechange --> type_change
+- debug mode is now activated through .ms if you put the "debug" command in your program
+- if-statements
+- expressions
+- equal signs (for more organized variable assignment
 
 Coming soon:
-- Updated debug mode
-- Updated printing
-- Better comments
-- if statements
+- else and else if
+- functions
 
 ## How to use
 To run the file without an IDE:

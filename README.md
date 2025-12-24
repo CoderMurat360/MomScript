@@ -17,25 +17,22 @@ Current features:
 - Type casting
 - Printing types
 - Expressions (math, concatenation, and boolean expressions)
-- if-statements
+- if-statements and else/else-if-statements
 
 Current limitations/bugs:
 - Comments cannot be used on the same line as code
-- no else/else-ifs
+- else/else
 
 ### Updates and things coming soon
 New features:
-- debug mode is now activated through .ms if you put the "debug" command in your program
-- if-statements
-- expressions
-- equal signs (for more organized variable assignment
+- else and else-if
+- lists (but not much outside of defining, changing, and simple expressions.)
 
 Coming soon:
-- else and else if
 - functions
 - while and for loops
-- lists
 - a FULL documentation
+- better lists (but that would probably come with advanced math and string functions, not on its own, and much later)
 
 ## How to use
 To run the file without an IDE:
@@ -46,4 +43,4 @@ Of course, example.ms is a placeholder; you can name and change it however you w
 
 The main.py file is the interpreter. If you have the files open in an IDE, run main.py to run the MomScript code.
 
-I am planning to make a Visual Studio Code template soon (since that is what I am using to make this project!)
+Also, a .exe file for running programs will come soon!

@@ -14,12 +14,14 @@ set int num 17
 set str name "Murat"
 set float decimal 6.7
 set bool condition True
+set list stuff [1, 2, 3]
 
 # print variables!
 print num
 print name
 print decimal
 print condition
+print stuff
 
 # change the values of variables!
 change str name "User"
@@ -47,6 +49,12 @@ print full_name
 print condition
 
 # and finally, if-statements! (indentation is not required)
+# and also else-statements now! (you can do else-ifs as well [else if (condition) then {})
+# if-else chains have to be put all on their own lines, like this:
 if condition then {
   print "Hello there."
 }
+else then {
+  print "Goodbye"
+}
+

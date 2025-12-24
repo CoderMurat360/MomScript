@@ -11,6 +11,10 @@ debug_mode = False
 skip = False
 # how many { ... } levels deep we are while skipping
 skip_depth = 0
+# tracks if we are in an if/else-if/else block
+in_if_chain = False
+# tracks if any branch in the chain has already executed
+branch_taken = False
 
 # handle expressions (math, string concat, boolean expressions)
 def expression(expr):
@@ -29,8 +33,8 @@ def variable_assignment(_type, name, value):
             # evaluate expressions with eval()
             result = expression(value)
             variables[name] = int(result)
-        except Exception:
-            print("Error: the variable's assigned type does not go with its value.")
+        except Exception as e:
+            print(f"Error: {e}; the variable could not be set/changed.")
             error = True
             return
     elif _type == "str":
@@ -38,8 +42,8 @@ def variable_assignment(_type, name, value):
             # evaluate expressions with eval()
             result = expression(value)
             variables[name] = str(result)
-        except Exception:
-            print("Error: the variable's assigned type does not go with its value.")
+        except Exception as e:
+            print(f"Error: {e}; the variable could not be set/changed.")
             error = True
             return
     elif _type == "float":
@@ -47,8 +51,8 @@ def variable_assignment(_type, name, value):
             # evaluate expressions with eval()
             result = expression(value)
             variables[name] = float(result)
-        except Exception:
-            print("Error: the variable's assigned type does not go with its value.")
+        except Exception as e:
+            print(f"Error: {e}; the variable could not be set/changed.")
             error = True
             return
     elif _type == "bool":
@@ -56,8 +60,17 @@ def variable_assignment(_type, name, value):
             # evaluate expressions with eval()
             result = expression(value)
             variables[name] = bool(result)
-        except Exception:
-            print("Error: the variable's assigned type does not go with its value.")
+        except Exception as e:
+            print(f"Error: {e}; the variable could not be set/changed.")
+            error = True
+            return
+    elif _type == "list":
+        try:
+            # evaluate expressions with eval()
+            result = expression(value)
+            variables[name] = list(result)
+        except Exception as e:
+            print(f"Error: {e}; the variable could not be set/changed.")
             error = True
             return
     else:
@@ -71,29 +84,36 @@ def variable_type_change(_type, name):
     if _type == "int":
         try:
             variables[name] = int(variables[name])
-        except ValueError:
-            print("Error: the variable's type could not be changed.")
+        except Exception as e:
+            print(f"Error: {e}; the variable's type could not be changed.")
             error = True
             return
     elif _type == "str":
         try:
             variables[name] = str(variables[name])
-        except ValueError:
-            print("Error: the variable's type could not be changed.")
+        except Exception as e:
+            print(f"Error: {e}; the variable's type could not be changed.")
             error = True
             return
     elif _type == "float":
         try:
             variables[name] = float(variables[name])
-        except ValueError:
-            print("Error: the variable's type could not be changed.")
+        except Exception as e:
+            print(f"Error: {e}; the variable's type could not be changed.")
             error = True
             return
     elif _type == "bool":
         try:
             variables[name] = bool(variables[name])
-        except ValueError:
-            print("Error: the variable's type could not be changed.")
+        except Exception as e:
+            print(f"Error: {e}; the variable's type could not be changed.")
+            error = True
+            return
+    elif _type == "list":
+        try:
+            variables[name] = list(variables[name])
+        except Exception as e:
+            print(f"Error: {e}; the variable's type could not be changed.")
             error = True
             return
     else:
@@ -122,7 +142,7 @@ def printing(parts, start = 1):
         result = expression(value)
         print(result)
         return
-    except Exception:
+    except Exception as e:
         print("Error: could not evaluate expression.")
         error = True
         return
@@ -146,7 +166,7 @@ def input_prompt(parts, start = 4):
     try:
         result = expression(value)
         return str(result)
-    except Exception:
+    except Exception as e:
         print("Error: could not evaluate expression in input prompt.")
         error = True
         return None
@@ -165,7 +185,7 @@ def if_skipping(parts):
 
 # handles if-statements
 def if_statements(parts):
-    global skip, skip_depth, error
+    global skip, skip_depth, error, in_if_chain, branch_taken
 
     # Step 1: find 'then' (allow optional colon 'then:')
     then_index = None
@@ -210,13 +230,19 @@ def if_statements(parts):
     try:
         # try to evaluate the condition
         condition_result = bool(expression(condition))
-    except Exception:
+    except Exception as e:
         # uh oh, looks like we couldnt! ERROR
         print("Error: could not evaluate if-condition.")
         error = True
         return
-
+    
     # Step 5: decide whether to skip the block or execute it
+    # this 'if' already starts a new chain
+    in_if_chain = True
+    branch_taken = condition_result
+
+
+    # Step 6: decide whether to skip the block or execute it
     # if the condition is true, just excecute the block normally
     if condition_result:
         # no skip mode, so the lines inside the block will be executed normally
@@ -228,6 +254,120 @@ def if_statements(parts):
         # and since the '{' has been found, start at depth 1.
         skip_depth = 1
         return
+
+# handles else-statements (else, else-if)
+def else_statements(parts):
+    global skip, skip_depth, error, in_if_chain, branch_taken
+
+    # You can only use else or else-if if we're in a chain
+    if not in_if_chain:
+        print("Error: else-statement without an if-statement.")
+        error = True
+        return
+
+    # handle else-if
+    if len(parts) >= 2 and parts[1] == "if":
+        # syntax: else if (condition) then {
+
+        # If a previous branch in this chain already executed, skip this whole block.
+        if branch_taken:
+            skip = True
+            skip_depth = 1
+            return
+
+        # Find 'then' starting from index 2
+        then_index = None
+        for i in range(2, len(parts)):
+            token = parts[i]
+            if token.rstrip(":") == "then":
+                then_index = i
+                break
+        
+        # if there is no then, give an error
+        if then_index is None:
+            print("Error: else-if-statement is missing 'then'.")
+            error = True
+            return
+
+        # if there is no condition, give an error
+        if then_index <= 2:
+            print("Error: else-if-statement has no condition before 'then'.")
+            error = True
+            return
+
+        # condition is everything between if and then
+        condition = " ".join(parts[2:then_index])
+
+        # make sure that there is a { after then
+        open_brace = False
+        for token in parts[then_index + 1:]:
+            if token == "{":
+                open_brace = True
+                break
+        
+        # if there is no open bracket, give an error
+        if not open_brace:
+            print("Error: 'else if' statement is missing '{'.")
+            error = True
+            return
+
+        # evaluate the condition
+        try:
+            condition_result = bool(expression(condition))
+        except Exception as e:
+            print("Error: could not evaluate else-if condition.")
+            error = True
+            return
+
+        # update the chain state
+        branch_taken = condition_result
+
+        # do stuff if the condition is true or false
+        if condition_result:
+            # This else-if branch will execute normally (no skip)
+            return
+        else:
+            # Condition false: skip this block
+            skip = True
+            skip_depth = 1
+            return
+
+    # else-statement
+    else:
+        # Expect: else then { or else then: {
+
+        # 1) make sure we have at least: ["else", "then", "{"]
+        if len(parts) < 3:
+            print("Error: else-statement is incomplete. Use: 'else then {' or 'else then: {'")
+            error = True
+            return
+
+        # 2) check that the second token is 'then' (allow 'then:' too)
+        if parts[1].lower().rstrip(":") != "then":
+            print("Error: else-statement must use 'else then {' or 'else then: {'.")
+            error = True
+            return
+        
+        open_brace = False
+        for token in parts[2:]:
+            if token == "{":
+                open_brace = True
+                break
+
+        if not open_brace:
+            print("Error: 'else' statement is missing '{'.")
+            error = True
+            return
+
+        if branch_taken:
+            # Some previous if/else-if was taken; skip this else block.
+            skip = True
+            skip_depth = 1
+            return
+        else:
+            # No previous branch in the chain executed; this else runs.
+            branch_taken = True
+            return
 
 
 # main function to read a line of code
@@ -274,6 +414,10 @@ def read_code(line):
     # if the command is if, then do an if-statement: if <condition> then {...}
     if command == "if":
         if_statements(parts)
+
+    # if the command starts with else, then do an else-statement (else or else-if)
+    elif command == "else":
+        else_statements(parts)
 
     # if command is "set", add a variable to the dictionary
     elif command == "set":

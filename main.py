@@ -1,5 +1,5 @@
 import shlex
-import sys
+import sys 
 
 # make a dictionary that will contain the variables
 variables = {}
@@ -15,6 +15,8 @@ skip_depth = 0
 in_if_chain = False
 # tracks if any branch in the chain has already executed
 branch_taken = False
+# tracks if the if chain is about to end, if its true, then the next statement has to be an else if the chain is to continue
+maybe_if_chain_end = False
 
 # handle expressions (math, string concat, boolean expressions)
 def expression(expr):
@@ -173,7 +175,7 @@ def input_prompt(parts, start = 4):
 
 # handles skipping false if-statements
 def if_skipping(parts):
-    global skip, skip_depth
+    global skip, skip_depth, in_if_chain, maybe_if_chain_end
     for token in parts:
         if token == "{":
             skip_depth += 1
@@ -182,6 +184,9 @@ def if_skipping(parts):
             if skip_depth == 0:
                 # close the block that started the skip
                 skip = False
+                # if we're in an if chain and we just closed a block, then the next statement has to be an else if the chain is to continue
+                if in_if_chain:
+                    maybe_if_chain_end = True
 
 # handles if-statements
 def if_statements(parts):
@@ -372,7 +377,7 @@ def else_statements(parts):
 
 # main function to read a line of code
 def read_code(line):
-    global error, variables, debug_mode, skip, skip_depth
+    global error, variables, debug_mode, skip, skip_depth, branch_taken, in_if_chain, maybe_if_chain_end
     var_type = ""
     var_name = ""
     var_value = ""
@@ -404,12 +409,21 @@ def read_code(line):
 
     # closing brace when not skipping: just end the statement
     if parts[0] == "}":
+        if in_if_chain:
+            # if we just closed a block and we're in an if chain, then the next statement has to be an else if the chain is to continue
+            maybe_if_chain_end = True
         return
 
     # get the first word of the line, which is the command
     # in this language, each line will have a command, what the line does
     # ex: "print" to print to the console, "set" to make a variable, "change" to change a variable's value
     command = parts[0]
+
+    if maybe_if_chain_end:
+        if command != "else":
+            in_if_chain = False
+            branch_taken = False
+        maybe_if_chain_end = False
 
     # if the command is if, then do an if-statement: if <condition> then {...}
     if command == "if":
@@ -528,6 +542,7 @@ def read_code(line):
 
         print(type(variables[var_name]))
     
+
     # if it is not a known command, give an error
     else:
         print("Error: This command does not exist.")
